@@ -105,6 +105,4 @@ docker compose up -d --build
 
 ## Логи
 
-Все события пишутся в `bot.log` и дублируются в stdout (видно через `docker compose logs bot`).
-
-## Требования к боту в Discord
+Все события пишутся в `bot.log` и дублируются в stdout (видно через `docker compose logs`).
