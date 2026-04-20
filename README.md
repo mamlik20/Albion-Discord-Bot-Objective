@@ -41,7 +41,7 @@ Discord-бот для отслеживания игровых объектов (
 
 ```bash
 git clone https://github.com/mamlik20/Albion-Discord-Bot-Objective.git
-cd your-repo
+cd Albion-Discord-Bot-Objective
 ```
 
 ### 2. Изменить `.env` файл
