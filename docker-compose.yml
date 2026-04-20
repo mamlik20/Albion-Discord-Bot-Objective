@@ -1,0 +1,29 @@
+services:
+  bot:
+    build: .
+    container_name: discord-bot
+    command: python main.py
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    environment:
+      - TZ=Europe/Moscow
+
+  website:
+    build: .
+    container_name: game_website
+    command: gunicorn -w 1 -b 0.0.0.0:5000 website.app:app
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - TZ=Europe/Moscow
+    depends_on:
+      - bot
+

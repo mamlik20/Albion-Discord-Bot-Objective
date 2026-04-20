@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход в систему{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-md-5 col-lg-4">
+            
+            <div class="card bg-dark text-white border-secondary shadow-lg">
+                <div class="card-header border-secondary text-center">
+                    <h4 class="mb-0">🔐 Авторизация</h4>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <!-- Сообщения об ошибках (если пароль неверный) -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} py-2 text-center" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="post">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Логин</label>
+                            <input type="text" name="username" class="form-control bg-secondary text-white border-0" placeholder="Введите логин" required autofocus>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Пароль</label>
+                            <input type="password" name="password" class="form-control bg-secondary text-white border-0" placeholder="Введите пароль" required>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Войти</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer border-secondary text-center text-muted small">
+                    Доступ только для персонала
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

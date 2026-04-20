@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Статистика{% endblock %}
+
+{% block content %}
+    <h2>🏆 Топ скаутов</h2>
+    <p class="text-muted">Рейтинг пользователей по количеству добавленных объектов.</p>
+    <hr>
+    
+    {% if stats %}
+    <div class="table-responsive">
+        <table class="table table-dark table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 5%;">#</th>
+                    <th scope="col">Пользователь</th>
+                    <th scope="col">Сервер</th>
+                    <th scope="col" style="width: 20%;">Добавлено объектов</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in stats %}
+                <tr>
+                    <td>
+                        {% if loop.index == 1 %}🥇
+                        {% elif loop.index == 2 %}🥈
+                        {% elif loop.index == 3 %}🥉
+                        {% else %}{{ loop.index }}
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ row.username }}</strong></td>
+                    <td><small class="text-muted">{{ row.guild }}</small></td>
+                    <td><span class="badge bg-warning text-dark fs-6">{{ row.count }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="alert alert-secondary">Статистики пока нет. Попросите пользователей добавить объекты через бота.</div>
+    {% endif %}
+{% endblock %}

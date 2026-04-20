@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Настройки: {{ guild_name }}{% endblock %}
+
+{% block content %}
+    <h2>Настройки сервера: <strong>{{ guild_name }}</strong></h2>
+    <p class="text-muted">ID Сервера: {{ guild_id }}</p>
+    <hr>
+
+    {# --- ФОРМА НАСТРОЙКИ РОЛЕЙ --- #}
+    <form method="post" action="{{ url_for('edit_server', guild_id=guild_id) }}">
+        <h4>Настройка прав доступа в Дискорде</h4>
+        <div class="row">
+
+            <!-- КОЛОНКА 1: Роли для добавления/редактирования ОБЪЕКТОВ -->
+            {% if current_user.can_edit_objects %}
+            <div class="col-lg-6">
+                <div class="card bg-dark text-white border-secondary mb-3 shadow-sm">
+                    <div class="card-header border-secondary text-info fw-bold">🛠️ Роли: Добавление/Редактирование Объектов</div>
+                    <div class="card-body">
+                        <p class="small text-muted">Кто может использовать команды <code>/add_data</code>, <code>/delete_data</code> и <code>/add_from_image</code>.</p>
+                        <textarea class="form-control bg-secondary text-white border-0" name="allowed_roles" rows="8" style="font-family: monospace;">{{ allowed_roles }}</textarea>
+                        <div class="form-text text-white-50 small">Введите ID роли. Название после <code>#</code> игнорируется, оно здесь для удобства.</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- КОЛОНКА 2: Роли для Пати Мейкера -->
+            {% if current_user.can_manage_party %}
+            <div class="col-lg-6">
+                <div class="card bg-dark text-white border-secondary mb-3 shadow-sm">
+                    <div class="card-header border-secondary text-warning fw-bold">🛡️ Роли: Управление Пачками (Party Maker)</div>
+                    <div class="card-body">
+                        <p class="small text-muted">Кто может подтверждать запись игроков, ставя реакцию ✅.</p>
+                        <textarea class="form-control bg-secondary text-white border-0" name="party_admin_roles" rows="8" style="font-family: monospace;">{{ party_admin_roles }}</textarea>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-success">💾 Сохранить настройки ролей</button>
+    </form>
+
+    <hr class="my-4">
+
+    {# --- ТАБЛИЦА АКТИВНЫХ ОБЪЕКТОВ --- #}
+    <h4>Активные объекты на сервере</h4>
+    
+    {% if items %}
+    <div class="table-responsive">
+        <table class="table table-dark table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Объект</th>
+                    <th scope="col">Локация</th>
+                    <th scope="col">Добавил</th>
+                    <th scope="col">Осталось времени</th>
+                    {% if current_user.can_edit_objects %}
+                    <th scope="col" class="text-end">Действия</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td><strong>{{ item.object_name }}</strong></td>
+                    <td>{{ item.location }}</td>
+                    <td><small class="text-muted">{{ item.added_by_name }}</small></td>
+                    <td>
+                        {% set time_left = item.time - now_timestamp %}
+                        {% if time_left > 0 %}
+                            <span class="badge bg-success">{{ '%02d:%02d:%02d' % (time_left // 3600, (time_left % 3600) // 60, time_left % 60) }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">Истекло</span>
+                        {% endif %}
+                    </td>
+                    {% if current_user.can_edit_objects %}
+                    <td class="text-end">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal-{{ loop.index0 }}">✏️</button>
+                        <form method="post" action="{{ url_for('delete_item', guild_id=guild_id, item_index=loop.index0) }}" class="d-inline" onsubmit="return confirm('Вы уверены?');">
+                            <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-secondary">На этом сервере нет активных объектов.</div>
+    {% endif %}
+
+    {# --- МОДАЛЬНЫЕ ОКНА ДЛЯ РЕДАКТИРОВАНИЯ --- #}
+    {% if current_user.can_edit_objects %}
+        {% for item in items %}
+        <div class="modal fade" id="editModal-{{ loop.index0 }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content bg-dark text-white border-secondary">
+                    <form method="post" action="{{ url_for('edit_item', guild_id=guild_id, item_index=loop.index0) }}">
+                        <div class="modal-header border-secondary">
+                            <h5 class="modal-title">Редактирование объекта</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="text-warning small">Заполняйте только те поля, которые хотите изменить.</p>
+                            <div class="mb-3">
+                                <label class="form-label">Название:</label>
+                                <input type="text" class="form-control bg-secondary text-white border-0" name="new_name" placeholder="{{ item.object_name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Локация:</label>
+                                <input type="text" class="form-control bg-secondary text-white border-0" name="new_location" placeholder="{{ item.location }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Новое время жизни:</label>
+                                <input type="text" class="form-control bg-secondary text-white border-0" name="new_time" placeholder="Оставьте пустым, чтобы не менять">
+                                <div class="form-text text-white-50">Примеры: <code>1ч 30м</code>, <code>45м</code>, <code>10</code>.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

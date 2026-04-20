@@ -1,0 +1,10 @@
+discord.py
+python-dotenv
+aiohttp
+aiohttp_socks
+google-generativeai
+Pillow
+Flask
+flask-login
+gunicorn
+PySocks

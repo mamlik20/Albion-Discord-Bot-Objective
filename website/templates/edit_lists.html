@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Глобальные настройки{% endblock %}
+
+{% block content %}
+    <h2>⚙️ Глобальные настройки бота</h2>
+    <p class="text-muted">Эти списки используются для автодополнения во всех командах на всех серверах.</p>
+    <hr>
+
+    <form method="post">
+        <ul class="nav nav-tabs mb-3" id="settingsTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="lists-tab" data-bs-toggle="tab" data-bs-target="#lists" type="button">📋 Текстовые списки</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="config-tab" data-bs-toggle="tab" data-bs-target="#config" type="button">🔧 JSON Конфигурация</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="settingsTabContent">
+            <!-- Вкладка 1 -->
+            <div class="tab-pane fade show active" id="lists" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Список локаций (locations.txt)</label>
+                        <textarea class="form-control bg-dark text-white font-monospace" name="locations" rows="15">{{ locations }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Список объектов (object_names.txt)</label>
+                        <textarea class="form-control bg-dark text-white font-monospace" name="object_names" rows="15">{{ object_names }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Вкладка 2 -->
+            <div class="tab-pane fade" id="config" role="tabpanel">
+                <div class="alert alert-warning py-2"><small>⚠️ Эти поля должны содержать валидный JSON.</small></div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Сокращения (abbreviations.json)</label>
+                    <textarea class="form-control bg-dark text-white font-monospace" name="abbreviations" rows="8">{{ abbreviations }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Иконки (icons.json)</label>
+                    <textarea class="form-control bg-dark text-white font-monospace" name="icons" rows="8">{{ icons }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <button type="submit" class="btn btn-success btn-lg">💾 Сохранить изменения</button>
+    </form>
+{% endblock %}

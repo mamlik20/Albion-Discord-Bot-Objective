@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Администрирование{% endblock %}
+
+{% block content %}
+    <h2>Администрирование</h2>
+    <hr>
+    <h4>Редактирование файла сокращений (abbreviations.json)</h4>
+    <p>Здесь можно задать правила для сокращения длинных названий объектов. Файл должен быть в валидном формате JSON.</p>
+
+    <form method="post">
+        <div class="mb-3">
+            <label for="abbreviations" class="form-label">abbreviations.json</label>
+            <textarea class="form-control" id="abbreviations" name="abbreviations" rows="15" style="font-family: monospace;">{{ abbreviations }}</textarea>
+            <div class="form-text">Пример: <code>{ "Полное имя": "Сокращение", "Другое полное имя": "Другое сокращение" }</code></div>
+        </div>
+        <button type="submit" class="btn btn-success">Сохранить сокращения</button>
+    </form>
+{% endblock %}

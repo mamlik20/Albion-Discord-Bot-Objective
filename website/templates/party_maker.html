@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Конструктор Пачек{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>🛡️ Конструктор Пачек (Party Maker)</h2>
+    <p class="text-muted">Здесь создаются шаблоны для команды <code>/game</code>.</p>
+    <hr>
+
+    <!-- Форма создания -->
+    <div class="card mb-5 bg-dark text-white border-secondary">
+        <div class="card-header border-secondary fw-bold text-success">Создать новый шаблон</div>
+        <div class="card-body">
+            <form action="{{ url_for('create_setup') }}" method="POST">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Название шаблона (без пробелов)</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0" name="setup_name" placeholder="Пример: ZvZ_Attack" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Количество пачек</label>
+                        <select class="form-select bg-secondary text-white border-0" name="party_count" id="partySelector">
+                            {% for i in range(1, 7) %}
+                            <option value="{{ i }}">{{ i }} Пач{{ 'ка' if i==1 else 'ки' if i < 5 else 'ек' }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div id="rolesContainer" class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label text-info">Роли Пачки 1</label>
+                        <textarea class="form-control bg-secondary text-white border-0" name="roles_1" rows="10" placeholder="1. Танк&#10;2. Хил..." required></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success mt-2">✅ Создать</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Список -->
+    <h3>Ваши шаблоны</h3>
+    {% if setups %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover align-middle">
+                <thead>
+                    <tr><th>Название</th><th>Размер</th><th class="text-end">Действия</th></tr>
+                </thead>
+                <tbody>
+                    {% for setup in setups %}
+                    <tr>
+                        <td><strong>{{ setup['name'] }}</strong></td>
+                        <td><span class="badge bg-secondary">{{ setup['party_count'] }} пачек</span></td>
+                        <td class="text-end">
+                            <form action="{{ url_for('delete_setup', name=setup['name']) }}" method="POST" onsubmit="return confirm('Удалить?');">
+                                <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-secondary">Шаблонов нет.</div>
+    {% endif %}
+</div>
+
+<script>
+    document.getElementById('partySelector').addEventListener('change', function() {
+        const count = parseInt(this.value);
+        const container = document.getElementById('rolesContainer');
+        container.innerHTML = ''; 
+        for (let i = 1; i <= count; i++) {
+            const col = document.createElement('div');
+            col.className = 'col-md-4 mb-3';
+            col.innerHTML = `
+                <label class="form-label text-info">Роли Пачки ${i}</label>
+                <textarea class="form-control bg-secondary text-white border-0" name="roles_${i}" rows="10" required></textarea>
+            `;
+            container.appendChild(col);
+        }
+    });
+</script>
+{% endblock %}
