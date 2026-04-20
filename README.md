@@ -29,7 +29,7 @@ Discord-бот для отслеживания игровых объектов (
 ## Стек
 
 - Python 3.11
-- [discord.py](https://github.com/Rapptz/discord.py)
+- discord.py
 - Google Gemini API (`google-generativeai`)
 - Flask + Flask-Login
 - SQLite
@@ -40,7 +40,7 @@ Discord-бот для отслеживания игровых объектов (
 ### 1. Клонировать репозиторий
 
 ```bash
-git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/mamlik20/Albion-Discord-Bot-Objective.git
 cd your-repo
 ```
 
